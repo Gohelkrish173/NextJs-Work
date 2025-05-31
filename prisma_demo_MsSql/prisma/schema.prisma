@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model LOC_City {
+  CityID       Int         @id(map: "PK__LOC_City__F2D21A965A52F8DE") @default(autoincrement())
+  CityName     String      @db.NVarChar(100)
+  CityCode     String      @db.NVarChar(10)
+  StateID      Int
+  CountryID    Int
+  CreatedDate  DateTime?   @db.DateTime
+  ModifiedDate DateTime?   @db.DateTime
+  LOC_Country  LOC_Country @relation(fields: [CountryID], references: [CountryID], onUpdate: NoAction, map: "FK__LOC_City__Countr__164452B1")
+  LOC_State    LOC_State   @relation(fields: [StateID], references: [StateID], onUpdate: NoAction, map: "FK__LOC_City__StateI__15502E78")
+}
+
+model LOC_Country {
+  CountryID    Int         @id(map: "PK__LOC_Coun__10D160BF1CF5EA26") @default(autoincrement())
+  CountryName  String      @db.NVarChar(100)
+  CountryCode  String      @db.NVarChar(10)
+  CreatedDate  DateTime?   @db.DateTime
+  ModifiedDate DateTime?   @db.DateTime
+  LOC_City     LOC_City[]
+  LOC_State    LOC_State[]
+}
+
+model LOC_State {
+  StateID      Int         @id(map: "PK__LOC_Stat__C3BA3B5AE9DFD85E") @default(autoincrement())
+  StateName    String      @db.NVarChar(100)
+  CountryID    Int
+  StateCode    String      @db.NVarChar(10)
+  CreatedDate  DateTime?   @db.DateTime
+  ModifiedDate DateTime?   @db.DateTime
+  LOC_City     LOC_City[]
+  LOC_Country  LOC_Country @relation(fields: [CountryID], references: [CountryID], onUpdate: NoAction, map: "FK__LOC_State__Count__1273C1CD")
+}
+
+model Product {
+  ProductID     Int       @id(map: "PK__Product__B40CC6ED36546BBF") @default(autoincrement())
+  ProductName   String?   @db.NVarChar(100)
+  Category      String?   @db.NVarChar(50)
+  Price         Decimal?  @db.Decimal(10, 2)
+  StockQuantity Int?
+  IsActive      Boolean?
+  CreatedDate   DateTime? @db.DateTime
+}
+
+model User {
+  UserID       Int       @id(map: "PK__User__1788CCACDB323A71") @default(autoincrement())
+  UserName     String    @db.NVarChar(100)
+  Email        String    @db.NVarChar(100)
+  Password     String    @db.NVarChar(100)
+  MobileNo     String    @db.NVarChar(10)
+  CreatedDate  DateTime? @db.DateTime
+  ModifiedDate DateTime? @db.DateTime
+}
